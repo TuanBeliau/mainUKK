@@ -2,7 +2,8 @@ import '../css/app.css';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Dashboard from '@/pages/siswa/dashboard';
+import DashboardGuru from '@/pages/guru/dashboard';
+import DashboardSiswa from '@/pages/siswa/dashboard';
 import PKL from '@/pages/siswa/pkl';
 import Industri from '@/pages/siswa/industri';
 import Login from '@/pages/auth/login';
@@ -49,14 +50,14 @@ function App() {
                     path="/siswa/dashboard"
                     element={
                         <ProtectedRoute allowedRoles={['siswa']}>
-                            <Dashboard />
+                            <DashboardSiswa />
                         </ProtectedRoute>
                     }
                 />
                 <Route
                     path="/siswa/industri"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['siswa']}>
                             <Industri />
                         </ProtectedRoute>
                     }
@@ -64,8 +65,16 @@ function App() {
                 <Route
                     path="/siswa/pkl"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['siswa']}>
                             <PKL />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/guru/dashboard"
+                    element={
+                        <ProtectedRoute allowedRoles={['guru']}>
+                            <DashboardGuru />
                         </ProtectedRoute>
                     }
                 />

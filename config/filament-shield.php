@@ -39,7 +39,6 @@ return [
             'create',
             'update',
             'delete',
-            'delete_any',
         ],
 
         'page' => 'page',

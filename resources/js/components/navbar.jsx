@@ -1,22 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation, Link } from "react-router-dom";
 
-export default function Navbar({siswa, setProfile, profile, handleProfile}) {
+export default function Navbar({user, setProfile, profile, handleProfile}) {
     const url = useLocation().pathname;
-    const [ notif, setNotif ] = useState({
-        open:false,
-        message:'',
-        severity:'success'
-    });
+    const role = sessionStorage.getItem('role');
     const [ modalProfile, setModalProfile ] = useState(false);
     const [ step, setStep ] = useState(0);
     const [ image, setImage ] = useState(null);
     const [ preview, setPreview ] = useState(null);
-    const isDifference = siswa && Object.keys(profile).filter(key => {
-        const siswaVal = siswa[key] ?? '';
+    const isDifference = user && Object.keys(profile).filter(key => {
+        const userVal = user[key] ?? '';
         const profileVal = profile[key] ?? '';
 
-        return siswaVal !== profileVal;
+        return userVal !== profileVal;
     })
     const isEmpty = useMemo(() => {
         return Object.values(profile)
@@ -47,30 +43,55 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
     }
 
     useEffect(() => {
-        if (siswa?.foto && !image) {
-            setPreview(`http://127.0.0.1:8000/storage/${siswa.foto}`);
+        if (user?.foto && !image) {
+            setPreview(`http://127.0.0.1:8000/storage/${user.foto}`);
 
-            setProfile({
-                nama: siswa.nama,
-                nis: siswa.nis,
-                gender: siswa.gender,
-                alamat: siswa.alamat,
-                kontak: siswa.kontak,
-                email: siswa.email,
-                foto: siswa.foto
-            });
+            if (role === 'siswa') {
+                setProfile({
+                    nama: user.nama,
+                    nis: user.nis,
+                    gender: user.gender,
+                    alamat: user.alamat,
+                    kontak: user.kontak,
+                    email: user.email,
+                    foto: user.foto
+                });
+            } else if (role === 'guru') {
+                setProfile({
+                    nama: user.nama,
+                    nip: user.nip,
+                    gender: user.gender,
+                    alamat: user.alamat,
+                    kontak: user.kontak,
+                    email: user.email,
+                    foto: user.foto
+                });
+            }
+            
         } else {
-            setProfile({
-                nama: siswa.nama,
-                nis: siswa.nis,
-                gender: siswa.gender,
-                alamat: siswa.alamat,
-                kontak: siswa.kontak,
-                email: siswa.email,
-                foto: siswa.foto
-            });
+            if (role === 'siswa') {
+                setProfile({
+                    nama: user.nama,
+                    nis: user.nis,
+                    gender: user.gender,
+                    alamat: user.alamat,
+                    kontak: user.kontak,
+                    email: user.email,
+                    foto: user.foto
+                });
+            } else if (role === 'guru') {
+                setProfile({
+                    nama: user.nama,
+                    nip: user.nip,
+                    gender: user.gender,
+                    alamat: user.alamat,
+                    kontak: user.kontak,
+                    email: user.email,
+                    foto: user.foto
+                });
+            }
         }
-    }, [siswa]);
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -80,45 +101,54 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
         }));
     };
 
-    console.log(isEmpty)
-
     const handleClear = () => {
         setModalProfile(false);
         setStep(0);
-        setPreview(`http://127.0.0.1:8000/storage/${siswa.foto}`)
+        setPreview(`http://127.0.0.1:8000/storage/${user.foto}`)
         setImage(null)
     }
 
     const imageClear =  () => {
-        setPreview(`http://127.0.0.1:8000/storage/${siswa.foto}`)
+        setPreview(`http://127.0.0.1:8000/storage/${user.foto}`)
         setImage(null)
         setProfile(prev => ({
             ...prev,
-            foto: siswa.foto
+            foto: user.foto
         }));
     }
 
     return (
         <div className="relative min-w-screen">
             <div className="flex min-w-screen space-x-10">
-                <div className="flex bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 shadow-[5px_10px_20px_rgba(0,0,0,0.5)] rounded-br-[100px] w-2/3 md:w-8/3 h-[90px] ">
-                    <Link to="/siswa/dashboard" className={`${url === "/siswa/dashboard" ? "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400" 
-                            : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} w-1/2 h-full md:justify-items-center`}>
-                        <img className="w-15 h-15 mt-4 ml-7" src="http://127.0.0.1:8000/img/home.png" alt="" />
-                    </Link>
-                    <Link to="/siswa/industri" className={`${url === "/siswa/industri" ? "bg-gradient-to-br from-blue-600 via-blue-400 to-blue-200" 
-                            : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} pl-5 w-1/2 h-full md:justify-items-center`}>
-                        <img className="w-15 h-15 mt-4 mb-2" src="http://127.0.0.1:8000/img/industri.png" alt="" />
-                    </Link>
-                    <Link to="/siswa/pkl" className={`${url === "/siswa/pkl" ? "bg-gradient-to-br from-blue-600 via-blue-400 to-blue-200 rounded-br-[100px]" 
-                            : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200 rounded-br-[100px]"} pl-5 w-1/2 h-full md:justify-items-center`}>
-                        <img className="w-15 h-15 mt-4 mb-2" src="http://127.0.0.1:8000/img/data.png" alt="" />
-                    </Link>
-                </div>
+                {role === 'siswa' && (
+                    <div className="flex bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 shadow-[5px_10px_20px_rgba(0,0,0,0.5)] rounded-br-[100px] w-2/3 md:w-8/3 h-[90px] ">
+                        <Link to="/siswa/dashboard" className={`${url === "/siswa/dashboard" ? "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400" 
+                                : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} w-1/2 h-full md:justify-items-center`}>
+                            <img className="w-15 h-15 mt-4 ml-7" src="http://127.0.0.1:8000/img/home.png" alt="" />
+                        </Link>
+                        <Link to="/siswa/industri" className={`${url === "/siswa/industri" ? "bg-gradient-to-br from-blue-600 via-blue-400 to-blue-200" 
+                                : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} pl-5 w-1/2 h-full md:justify-items-center`}>
+                            <img className="w-15 h-15 mt-4 mb-2" src="http://127.0.0.1:8000/img/industri.png" alt="" />
+                        </Link>
+                        <Link to="/siswa/pkl" className={`${url === "/siswa/pkl" ? "bg-gradient-to-br from-blue-600 via-blue-400 to-blue-200 rounded-br-[100px]" 
+                                : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200 rounded-br-[100px]"} pl-5 w-1/2 h-full md:justify-items-center`}>
+                            <img className="w-15 h-15 mt-4 mb-2" src="http://127.0.0.1:8000/img/data.png" alt="" />
+                        </Link>
+                    </div>
+                )}
+
+                {role === 'guru' && (
+                    <div className="flex bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 shadow-[5px_10px_20px_rgba(0,0,0,0.5)] rounded-br-[100px] w-2/3 md:w-8/3 h-[90px] ">
+                        <Link to="/guru/dashboard" className={`${url === "/guru/dashboard" ? "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400" 
+                                : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} w-full h-full md:justify-items-center rounded-br-[100px]`}>
+                            <img className="w-15 h-15 mt-4 ml-7" src="http://127.0.0.1:8000/img/home.png" alt="" />
+                        </Link>
+                    </div>
+                )}
                 <div className="relative w-1/3 text-black">
                     <button className="relative mr-5 bg-gradient-to-br from-blue-500 via-blue-300 hover:via-blue-400 hover:to-blue-200 to-blue-100 w-20 h-20 rounded-full mt-2 pl-[10px] hover:bg-gray-400 shadow-[5px_5px_10px_rgba(0,0,0,0.5)]">
-                        { siswa?.foto ? (
-                            <img src={`http://127.0.0.1:8000/storage/${siswa?.foto}`} onClick={() => setModalProfile(true)} alt="" 
+                        { user?.foto ? (
+                            <img src={`http://127.0.0.1:8000/storage/${user?.foto}`} onClick={() => setModalProfile(true)} alt="" 
                                 className="w-15 h-15 rounded-full"
                             />
                         ) : (
@@ -149,14 +179,25 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
                                             className="bg-gray-500 rounded-full w-full py-2 px-4"
                                         />
                                     </div>
-                                    <div className="w-full">
-                                        <label>Data Nomor Induk data</label>
-                                        <input type="number" value={profile.nis ?? ""} placeholder={profile.nis ?? 'Belum di isi'}
-                                            onChange={handleChange} name="nis"
-                                            className="bg-gray-500 rounded-full w-full py-2 px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
-                                            readOnly
-                                        />
-                                    </div>
+                                    {role === 'siswa' && (
+                                        <div className="w-full">
+                                            <label>Data Nomor Induk Nasional</label>
+                                            <input type="number" value={profile.nis ?? ""} placeholder={profile.nis ?? 'Belum di isi'}
+                                                onChange={handleChange} name="nis"
+                                                className="bg-gray-500 rounded-full w-full py-2 px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                                readOnly
+                                            />
+                                        </div>
+                                    )}
+                                    {role === 'guru' && (
+                                        <div className="w-full">
+                                            <label>Data Nomor Induk Pegawai</label>
+                                            <input type="number" value={profile.nip ?? ""} placeholder={profile.nip ?? 'Belum di isi'}
+                                                onChange={handleChange} name="nip"
+                                                className="bg-gray-500 rounded-full w-full py-2 px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                            />
+                                        </div>
+                                    )}
                                     <div className="w-full">
                                         <label>Jenis Kelamin</label>
                                         <select name="gender" className="bg-gray-500 appearance-none rounded-full w-full p-2 md:pl-4"
@@ -182,7 +223,7 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
                                         <input type="email" value={profile.email ?? ""} placeholder={profile.email ?? 'Belum di isi'}
                                             onChange={handleChange} name="email"
                                             className="bg-gray-500 rounded-full w-full py-2 px-4"
-                                            required readOnly
+                                            required readOnly={role === 'siswa'}
                                         />
                                     </div>
                                     <div className="w-full">

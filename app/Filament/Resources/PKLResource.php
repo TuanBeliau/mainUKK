@@ -34,18 +34,20 @@ class PKLResource extends Resource
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Select::make('siswa_id')
-                                    ->label('Pilih Siswa')
-                                    ->searchable()
-                                    ->preload()
+                                    ->label('Nama Siswa')
+                                    ->disabled()
                                     ->relationship('siswa', 'nama')
-                                    ->required(),
+                                    ->options(Siswa::whereNotNull('nama')->pluck('nama', 'id'))
+                                    ->getOptionLabelUsing(fn ($value) => siswa::find($value)?->nama ?? 'Tidak ditemukan')
+                                    ->placeholder('Masukkan Nama Siswa')
+                                    ->hidden(fn ($get) => blank($get('siswa_id')))
+                                    ->disabled(),
 
                                 Forms\Components\Select::make('guru_id')
                                     ->label('Pilih Guru Pembimbing')
                                     ->searchable()
                                     ->preload()
                                     ->relationship('guru', 'nama'),
-                                    // ->required(),
 
                                 Forms\Components\Select::make('industri_id')
                                     ->label('Pilih Industri')
@@ -76,8 +78,8 @@ class PKLResource extends Resource
                                                     $fail('Tanggal Selesai Tidak Boleh Kurang atau Sama Dengan Tanggal Mulai.');
                                                 }
 
-                                                if ($selesaiDate->lt($mulaiDate->copy()->addMonths(3))) {
-                                                    $fail('Minimal Jarak Tanggal Mulai dan Selesai adalah 3 Bulan.');
+                                                if ($selesaiDate->lt($mulaiDate->copy()->addMonths(1))) {
+                                                    $fail('Minimal Jarak Tanggal Mulai dan Selesai adalah 1 Bulan.');
                                                 }
                                             }
                                         ];

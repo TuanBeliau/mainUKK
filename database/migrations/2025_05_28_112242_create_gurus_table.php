@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('kontak');
             $table->string('email')->unique();
+            $table->string('foto');
             $table->timestamps();
         });
     }

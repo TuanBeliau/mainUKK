@@ -28,11 +28,19 @@ class AuthenticationController extends Controller
             'password.min' => 'Panjang Password Minimal 6 Karakter'
         ]);
 
-        $user = Models\User::whereHas('siswa', function ($query) use ($validated) {
-                $query->where('email', $validated['email']);
-            })
-            ->with('siswa')
-            ->first();
+        $siswa = Models\User::whereHas('siswa', function ($query) use ($validated) {
+                    $query->where('email', $validated['email']);
+                })
+                ->with('siswa')
+                ->first();
+
+        $guru = Models\User::whereHas('guru', function ($query) use ($validated) {
+                    $query->where('email', $validated['email']);
+                })
+                ->with('guru')
+                ->first();
+
+        $user = $siswa ?? $guru;
         
         if (!$user) {
             throw new \Exception('Pengguna Tidak di Temukan');
@@ -42,7 +50,9 @@ class AuthenticationController extends Controller
             throw new \Exception('Password salah');
         }
 
-        Auth::login($user);
+        if ($user) {
+            Auth::login($user);
+        } 
 
         $userRole = Auth::user()->getRoleNames();
 
@@ -130,7 +140,7 @@ class AuthenticationController extends Controller
         $user = Auth::user();
 
         if (!$user) {
-            return response()->json(['error' => 'siswa not authenticated'], 401);
+            return response()->json(['error' => 'User not authenticated'], 401);
         }
 
         $user->tokens()->delete();

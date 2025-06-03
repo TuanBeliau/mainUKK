@@ -6,7 +6,7 @@ import Notification from "../../components/notification";
 import Navbar from "../../components/navbar";
 import Logout from "../../components/logout";
 
-export default function dashboard() {
+export default function DashboardSiswa() {
     const [notif, setNotif] = useState({
         open:false,
         message: '',
@@ -17,9 +17,6 @@ export default function dashboard() {
     const [industri, setIndustri] = useState([]);
     const fetchData = () => {
         const token = sessionStorage.getItem('token');
-        if (!token) {
-            window.location.href = "/";
-        }
 
         axios.get('/api/siswa', {
             headers: {
@@ -29,14 +26,10 @@ export default function dashboard() {
         .then(res => {
             setSiswa(res.data.siswa.siswa);
             setIndustri(res.data.industri);
-            // if (!role) {
-            //     sessionStorage.removeItem('token');
-            // }
         })
         .catch(err => {
             if (err.response && err.response.status === 401) {
                 console.warn('Unauthorized, redirecting to login...');
-                // Optional: kamu bisa redirect user ke login di sini
             }
         });
     };
@@ -392,7 +385,7 @@ export default function dashboard() {
     return (
         <div className="relative bg-[#FEFEFE] w-full min-h-screen md:justify-items-center">
             {/* Navbar */}
-            <Navbar siswa={siswa} setProfile={setProfile} profile={profile} handleProfile={handleProfile}/>
+            <Navbar user={siswa} setProfile={setProfile} profile={profile} handleProfile={handleProfile}/>
 
             <Notification 
                 open={notif.open}
@@ -638,8 +631,6 @@ export default function dashboard() {
                             />
                         </div>
                     )}
-
-                    <div></div>
                 </div>
             </div>
 

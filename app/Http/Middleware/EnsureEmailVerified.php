@@ -19,7 +19,7 @@ class EnsureEmailVerified
     {
         $user = auth()->user();
 
-        if (!$user || !$user->siswa || $user->email_verified_at === null) {
+        if (!$user || $user->email_verified_at === null) {
             throw new \Exception('Email Belum Terverifikasi');
         }
 

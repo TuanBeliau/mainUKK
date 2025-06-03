@@ -6,7 +6,9 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use App\Models\Siswa;
+use App\Models\Guru;
 use Filament\Forms;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,40 +31,37 @@ class UserResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->visible(fn ($get) => filled($get('name')))
                             ->label('Nama Admin')
                             ->placeholder('Masukkan Nama Admin')
-                            ->rules(function (callable $get) {
-                                return [
-                                    Rule::unique('users', 'name')->ignore($get('id')),
-                                ];
-                            })
-                            ->validationMessages([
-                                'unique' => 'Nama sudah digunakan.',
-                            ])                               
-                            ->required(),
-
-                        Forms\Components\BelongsToSelect::make('siswa_id')
-                            ->visible(fn ($get) => filled($get('siswa_id')))
-                            ->label('Nama Siswa')
-                            ->disabled()
-                            ->relationship('siswa', 'nama')
-                            ->placeholder('Masukkan Nama Siswa')                         
-                            ->required(),
+                            ->reactive()
+                            ->requiredWithout('guru_id')
+                            ->disabled(fn ($get) => filled($get('guru_id'))),
 
                         Forms\Components\TextInput::make('email')
-                            ->visible(fn ($get) => filled($get('email')))
                             ->label('Email Admin')
+                            ->reactive()
                             ->placeholder('Masukkan Email Admin')
                             ->email()
-                            ->required(),
+                            ->requiredWithout('guru_id')
+                            ->disabled(fn ($get) => filled($get('guru_id'))),
 
-                        Forms\Components\BelongsToSelect::make('siswa_id')
-                            ->visible(fn ($get) => filled($get('siswa_id')))
-                            ->disabled()
-                            ->relationship('siswa', 'email')
-                            ->label('Email Siswa')
-                            ->required(),
+                        Forms\Components\BelongsToSelect::make('guru_id')
+                            ->label('Nama Guru')
+                            ->nullable()
+                            ->reactive()
+                            ->relationship('guru', 'nama')
+                            ->placeholder('Masukkan Nama Guru')
+                            ->disabled(fn ($get) => filled($get('name')) && filled($get('email')))
+                            ->requiredWithout(['name', 'email']),
+
+                        Forms\Components\TextInput::make('password')
+                            ->label('Password')
+                            ->password()
+                            ->required()
+                            ->autocomplete('new-password')
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->placeholder('Masukkan Password'),
                         
                         Forms\Components\Select::make('Role')
                             ->label('Pilih role')
@@ -78,7 +77,7 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                 ->getStateUsing(function ($record) {
-                    return $record->name ?? $record->siswa->nama ?? '-';
+                    return $record->name ?? $record->siswa->nama ?? $record->guru->nama ?? '-';
                 })
                 ->searchable(query: function ($query, $search) {
                     $query
@@ -89,7 +88,7 @@ class UserResource extends Resource
                 }),
                 Tables\Columns\TextColumn::make('email')
                 ->getStateUsing(function ($record) {
-                    return $record->email ?? $record->siswa->email ?? '-';
+                    return $record->email ?? $record->siswa->email ?? $record->guru->email ?? '-';
                 })
                 ->searchable(query: function ($query, $search) {
                     $query

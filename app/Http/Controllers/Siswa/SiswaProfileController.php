@@ -27,8 +27,7 @@ class SiswaProfileController extends Controller
             'foto'  => 'file|mimes:jpg,png,jpeg|max:2048'
         ], [
             'email.unique' => 'Email Sudah Terdaftar Tolong Masukkan Email Lain!',
-            'nis.digits' => 'Nomor Induk Siswa Tidak Boleh Lebih dari 5 Digut!',
-            'nis.digits' => 'Nomor Induk Siswa Tidak Boleh Lebih dari 5 Digut!',
+            'nis.digits' => 'Nomor Induk Siswa Harus 5 Digit!',
         ]);
 
         DB::transaction(function() use ($request, $siswa) {

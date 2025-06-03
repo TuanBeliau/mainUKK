@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class DashboardController extends Controller
+class DashboardSiswaController extends Controller
 {
     /**
      * Display a listing of the resource.

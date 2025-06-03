@@ -45,7 +45,7 @@ class GuruResource extends Resource
                             ])
                             ->required(),
                         
-                            Forms\Components\TextInput::make('email')
+                        Forms\Components\TextInput::make('email')
                             ->label('Email Guru')
                             ->placeholder('Masukkan Email Guru')
                             ->email()
@@ -70,6 +70,18 @@ class GuruResource extends Resource
                             ->minLength(10)
                             ->maxLength(15)
                             ->required(),
+
+                        Forms\Components\FileUpload::make('foto')
+                            ->label('Foto Guru')
+                            ->image()
+                            ->directory('foto-gur')
+                            ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png'])
+                            ->maxSize(2048)
+                            ->required()
+                            ->maxFiles(1)
+                            ->enableOpen()
+                            ->enableDownload()
+                            ->disk('public'), 
                     ])
             ]);
     }
@@ -80,10 +92,13 @@ class GuruResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nama')->searchable(),
                 Tables\Columns\TextColumn::make('nip')->searchable(),
+                Tables\Columns\TextColumn::make('email')->searchable(),
                 Tables\Columns\TextColumn::make('gender')
                     ->formatStateUsing(fn ($state) => $state == 'L' ? 'Laki-laki' : 'Perempuan'),
                 Tables\Columns\TextColumn::make('alamat'),
                 Tables\Columns\TextColumn::make('kontak'),
+                Tables\Columns\ImageColumn::make('foto')
+                    ->circular(),
             ])
             ->filters([
                 //
