@@ -214,7 +214,7 @@ export default function DashboardGuru() {
                                         <h2>{selected.industri.alamat}</h2>
                                     </div>
                                     <div>
-                                        <h1 className="font-bold">Website Perusahaan : </h1>
+                                        <h1 className="font-bold">Status Laporan PKL : </h1>
                                         <h2>{selected.siswa.status_lapor_pkl}</h2>
                                     </div>
                                 </div>
