@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { router, useForm } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
 import Notification from "../../components/notification";
 
 export default function Login() {
-    const {data, setData, post, processing, errors} = useForm({
+    const [data, setData] = useState({
         nama:'',
         nis:'',
         email:'',
@@ -15,7 +14,16 @@ export default function Login() {
         message:'',
         severity:'success'
     });
+    const [siswa, setSiswa] = useState([]);
+    const [showList, setShowList] = useState(false);
     const [visible, setVisible] = useState(false);
+    const getDataSiswa = async () => {
+        const response = await axios.get('/api/data/siswa/register')
+
+        if (response.data.success) {
+            setSiswa(response.data.siswa);
+        }
+    } 
 
     const submit = async (e) => {
         e.preventDefault();
@@ -28,8 +36,9 @@ export default function Login() {
             });
 
             if (response.data.success) {
-                localStorage.setItem('token', response.data.token);
-                console.log(response.data.token)
+                sessionStorage.setItem('token', response.data.token);
+                
+                sessionStorage.setItem('role', response.data.role);
                 window.location.href = '/siswa/dashboard';
             }
         } catch (error) {
@@ -50,40 +59,73 @@ export default function Login() {
         }
     }
 
+    const filteredData = siswa.filter((item) =>
+        item.email.toLowerCase().includes((data.email || '').toLowerCase())
+    );
+
+    const handleChangeInput = (e) => {
+        const {name, value} = e.target;
+        setData((prev) => ({
+            ...prev,
+            [name] : value
+        }))
+    }
+
+    const handleSelectedItem = (item) => {
+        setData((prev) => ({
+            ...prev,
+            email: item.email,
+            nis: item.nis
+        }));
+
+        setShowList(false);
+    }
+
+    useEffect(() => {
+        getDataSiswa();
+
+        const interval = setInterval(getDataSiswa, 60000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div className="relative bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100  w-screen h-screen justify-items-center">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FEFEFE] text-black min-w-[250px] min-h-[350px] md:min-w-[400px] md:min-h-[490px] rounded-lg">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FEFEFE] text-black min-w-[250px] min-h-[350px] md:min-w-[400px] md:min-h-[430px] rounded-lg">
                 <h1 className="text-center text-[30px] mt-10 font-bold">Register</h1>
-                <form onSubmit={submit} className="ml-3 md:mr-3 mt-5 md:mt-3 space-y-3 md:space-y-4">
+                <form onSubmit={submit} className="ml-3 md:mr-3 mt-5 md:mt-3 space-y-3 md:space-y-4" autoComplete="off">
+                    <div className="relative md:flex md:flex-col">
+                        <label>Email Siswa</label>
+                        <label className="text-sm text-gray-500">{`(Ketik Lalu Email dengan Format nis@sija.com)`}</label>
+                        <input type="text" name="email"
+                            value={data.email} 
+                            onChange={(e) => {handleChangeInput(e); setShowList(true)}}
+                            className="bg-[#DFF1FF] rounded-md min-w-[220px] md:max-w-[376px] py-1 pl-3 focus:outline-none"
+                            required
+                            readOnly
+                            onFocus={(e) => e.target.removeAttribute('readOnly')}
+                        />
+                        {showList && filteredData.length > 0 && (
+                            <ul className="absolute bg-white w-[250px] mt-20 rounded-lg max-h-40 overflow-y-auto shadow z-10">
+                                {filteredData.slice(0, 3).map((item) => (
+                                    <li
+                                        key={item.id}
+                                        onClick={() => handleSelectedItem(item)}
+                                        className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                                    >
+                                        {item.email}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
                     <div className="relative md:flex md:flex-col">
                         <label>Nama Siswa</label>
                         <input 
-                            type="text" 
+                            type="text" name="nama"
                             value={data.nama}
-                            onChange={(e) => setData('nama', e.target.value)}
-                            required
-                            className="bg-[#DFF1FF] rounded-md min-w-[220px] md:max-w-[376px] py-1 pl-3 focus:outline-none"
-                        />
-                    </div>
-
-                    <div className="relative md:flex md:flex-col">
-                        <label>Nomor Induk Nasional</label>
-                        <input 
-                            type="number" 
-                            maxLength='5'
-                            value={data.nis}
-                            onChange={(e) => setData('nis', e.target.value)}
-                            required
-                            className="bg-[#DFF1FF] rounded-md min-w-[220px] md:max-w-[376px] py-1 pl-3 focus:outline-none"
-                        />
-                    </div>
-
-                    <div className="relative md:flex md:flex-col">
-                        <label>Email</label>
-                        <input 
-                            type="text" 
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
+                            onChange={handleChangeInput}
                             required
                             className="bg-[#DFF1FF] rounded-md min-w-[220px] md:max-w-[376px] py-1 pl-3 focus:outline-none"
                         />
@@ -92,9 +134,9 @@ export default function Login() {
                     <div className="relative md:flex md:flex-col">
                         <label>Password</label>
                         <input
-                            type={visible ? 'text' : 'password' }
+                            type={visible ? 'text' : 'password' } name="password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={handleChangeInput}
                             required
                             className="bg-[#DFF1FF] rounded-md min-w-[220px] md:max-w-[376px] py-1 pl-3 focus:outline-none"
                         />
@@ -113,7 +155,7 @@ export default function Login() {
                         type="submit"
                         className="  w-[220px] md:w-full md:mr-2 py-2 mt-3 bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 hover:bg-black rounded-lg"
                     >
-                        {processing? 'Logging in...' : 'Register'}
+                        Register
                     </button>
                 </form>
             </div>

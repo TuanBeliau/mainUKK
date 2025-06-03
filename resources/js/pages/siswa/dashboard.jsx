@@ -16,10 +16,10 @@ export default function dashboard() {
     const [siswa, setSiswa] = useState([]);
     const [industri, setIndustri] = useState([]);
     const fetchData = () => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (!token) {
             window.location.href = "/";
-        };
+        }
 
         axios.get('/api/siswa', {
             headers: {
@@ -29,7 +29,9 @@ export default function dashboard() {
         .then(res => {
             setSiswa(res.data.siswa.siswa);
             setIndustri(res.data.industri);
-            
+            // if (!role) {
+            //     sessionStorage.removeItem('token');
+            // }
         })
         .catch(err => {
             if (err.response && err.response.status === 401) {
@@ -60,6 +62,7 @@ export default function dashboard() {
     })
     const [laporPKL, setLaporPKL] = useState({
         nama:'',
+        website:'',
         bidang_usaha:'',
         alamat:'',
         email:'',
@@ -78,6 +81,21 @@ export default function dashboard() {
         return Object.values(laporPKL)
             .some(value => !value || value.toString().trim() === '')
     }, [laporPKL]);
+
+    const isDifferent = () => {
+        if (!siswa?.pkl || !siswa?.pkl?.industri) return true;
+
+        return (
+            laporPKL.nama !== siswa.pkl.industri.nama ||
+            laporPKL.bidang_usaha !== siswa.pkl.industri.bidang_usaha ||
+            laporPKL.website !== siswa.pkl.industri.website ||
+            laporPKL.alamat !== siswa.pkl.industri.alamat ||
+            laporPKL.kontak !== siswa.pkl.industri.kontak ||
+            laporPKL.email !== siswa.pkl.industri.email ||
+            laporPKL.mulai !== siswa.pkl.mulai ||
+            laporPKL.selesai !== siswa.pkl.selesai
+        );
+    };
 
     const isProfile = Object.entries(siswa)
         .filter(([key, _]) => key !== 'pkl')
@@ -119,7 +137,7 @@ export default function dashboard() {
     // Update Profile Siswa
     const handleProfile = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         const formData = new FormData();
         
         formData.append('_method', 'PUT')
@@ -182,7 +200,7 @@ export default function dashboard() {
 
     const hapusLaporPKL = async (e, parameter) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
 
         try {
             if (parameter == 1) {
@@ -228,7 +246,7 @@ export default function dashboard() {
     // Create and Edit Laporan PKL
     const handleSubmit = async (e) => {     
         e.preventDefault(); 
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
 
         if (siswa.pkl) {
             try {
@@ -253,6 +271,7 @@ export default function dashboard() {
                 if (errors && typeof errors === 'object') {
                     errorMsg = Object.values(errors).flat().join('\n');
                 }
+
                 handleClear()
                 setNotif({
                     open: true,
@@ -298,35 +317,56 @@ export default function dashboard() {
 
     // Fetch Data
     useEffect(() => {
-
         fetchData();
+
         const interval = setInterval(fetchData, 60000);
 
         return () => clearInterval(interval);
     }, []);
 
-    const [tanggalMulai, setTanggalMulai] = useState(new Date());
+    const [tanggalMulai, setTanggalMulai] = useState('');
     const [tanggalSelesai, setTanggalSelesai] = useState('');
 
     useEffect(() => {
-        setLaporPKL(prev => ({
-            ...prev,
-            mulai: tanggalMulai ? tanggalMulai.toISOString().split('T')[0] : '',
-        }));
-    }, [tanggalMulai])
+        if (siswa?.pkl?.industri) {
+            setLaporPKL(prev => ({
+                ...prev,
+                nama: siswa.pkl.industri?.nama || '',
+                bidang_usaha: siswa.pkl.industri?.bidang_usaha || '',
+                website: siswa.pkl.industri?.website || '',
+                alamat: siswa.pkl.industri?.alamat || '',
+                email: siswa.pkl.industri?.email || '',
+                kontak: siswa.pkl.industri?.kontak || '',
+                mulai: tanggalMulai
+                    ? tanggalMulai.toISOString().split('T')[0]
+                    : siswa.pkl?.mulai || '',
+                selesai: tanggalSelesai
+                    ? tanggalSelesai.toISOString().split('T')[0]
+                    : siswa.pkl?.selesai || '',
+            }));
+        }
+    }, [siswa, tanggalMulai, tanggalSelesai]);
 
     useEffect(() => {
         setLaporPKL(prev => ({
             ...prev,
-            selesai: tanggalSelesai ? tanggalSelesai.toISOString().split('T')[0] : '',
+            mulai: tanggalMulai ? tanggalMulai.toISOString().split('T')[0] : siswa.pkl?.mulai,
         }));
-    }, [tanggalSelesai])
+    }, [siswa, tanggalMulai])
+
+    useEffect(() => {
+        setLaporPKL(prev => ({
+            ...prev,
+            selesai: tanggalSelesai ? tanggalSelesai.toISOString().split('T')[0] : siswa.pkl?.selesai,
+        }));
+    }, [siswa, tanggalSelesai])
+
 
     const notifProfile = () => {
         setNotif({
             open:true,
             message:'tolong isi semua data profile',
-            severity:'error'
+            severity:'info'
         })
     }
 
@@ -402,7 +442,8 @@ export default function dashboard() {
                                         { step == 0 && (
                                             <div className="space-y-3">
                                                 <div className="w-full">
-                                                    <label>Nama Industri</label>
+                                                    <label className='block'>{`Nama Industri`}</label>
+                                                    <label className='text-gray-700 text-sm'>{`(Tolong Masukan Nama dan Email yang berbeda Untuk Industri Baru)`}</label>
                                                     <input type="text" onChange={(e) => {handleChangeLaporPKL(e); setShowList(true)}} value={laporPKL.nama ?? ''}
                                                         placeholder={`${siswa.pkl?.industri.nama ?? "Masukkan Nama Industri"}`} name='nama'
                                                         className="bg-gray-500 rounded-full w-full py-2 px-4"
@@ -470,11 +511,11 @@ export default function dashboard() {
                                                 <div className="relative w-full">
                                                     <label className='md:block'>Tanggal Mulai :</label>
                                                     <DatePicker
-                                                        selected={tanggalMulai}
-                                                        placeholderText={siswa?.pkl?.mulai}
-                                                        onChange={(e) => {setTanggalMulai(e)}} name='mulai'
+                                                        selected={tanggalMulai ? tanggalMulai : siswa.pkl?.mulai}
+                                                        onChange={(e) => {setTanggalMulai(e)}} name='mulai' placeholderText='Masukkan Tanggal Mulai PKL'
                                                         className="w-full md:w-113 text-white bg-gray-500 rounded-full py-2 pl-4 pr-12 focus:outline-none"
                                                         dateFormat="yyyy-MM-dd"
+                                                        minDate={new Date()}
                                                         required
                                                     />
                                                     <img src="http://127.0.0.1:8000/img/date.png" alt="" 
@@ -484,13 +525,12 @@ export default function dashboard() {
                                                 <div className="relative w-full">
                                                     <label className='md:block'>Tanggal Selesai :</label>
                                                     <DatePicker
-                                                        selected={tanggalSelesai}
-                                                        placeholderText={siswa?.pkl?.selesai}
-                                                        onChange={(e) => {setTanggalSelesai(e)}} name='selesai'
+                                                        selected={tanggalSelesai ? tanggalSelesai : siswa.pkl?.selesai}
+                                                        onChange={(e) => {setTanggalSelesai(e)}} name='selesai' placeholderText='Masukan Tanggal Selesai PKL'
                                                         className="w-full md:w-113 text-white bg-gray-500 rounded-full py-2 pl-4 pr-12 focus:outline-none"
                                                         dateFormat="yyyy-MM-dd"
                                                         required
-                                                        minDate={siswa.pkl?.mulai ?? tanggalMulai}
+                                                        minDate={tanggalMulai ? tanggalMulai : siswa.pkl?.mulai}
                                                     />
                                                     <img src="http://127.0.0.1:8000/img/date.png" alt="" 
                                                         className="absolute right-4 top-1/2 transform -translate-y-1/12 w-6 Fh-6 pointer-events-none"
@@ -511,7 +551,7 @@ export default function dashboard() {
                                                 </div>
                                             )}
                                             { step == 1 && (
-                                                <div className={`bg-green-500 rounded-full ${isEmpty ? 'hidden' : ''} justify-end p-1 px-5`}>
+                                                <div className={`bg-green-500 rounded-full ${!isEmpty && isDifferent() ? '' : 'hidden'} justify-end p-1 px-5`}>
                                                     <button type="submit">Submit</button>
                                                 </div>
                                             )}

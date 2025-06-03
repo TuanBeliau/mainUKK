@@ -8,7 +8,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
 
-class EnsureTokenUser
+class EnsureEmailVerified
 {
     /**
      * Handle an incoming request.
@@ -19,16 +19,8 @@ class EnsureTokenUser
     {
         $user = auth()->user();
 
-        if ($user) {
-            logger('Data User : ', $user->toArray());
-        }
-
-        $hasToken = PersonalAccessToken::where('tokenable_id', $user->id)
-            ->where('tokenable_type', get_class($user))
-            ->exists();
-
-        if (!$hasToken) {
-            return redirect('/'); // atau abort(403, 'No token found')
+        if (!$user || !$user->siswa || $user->email_verified_at === null) {
+            throw new \Exception('Email Belum Terverifikasi');
         }
 
         return $next($request);

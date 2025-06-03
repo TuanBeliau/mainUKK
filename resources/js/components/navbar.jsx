@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation, Link } from "react-router-dom";
 
 export default function Navbar({siswa, setProfile, profile, handleProfile}) {
@@ -18,6 +18,10 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
 
         return siswaVal !== profileVal;
     })
+    const isEmpty = useMemo(() => {
+        return Object.values(profile)
+            .some(value => !value || value.toString().trim() === '')
+    }, [profile])
     const isValid = Object.entries(profile)
         .filter(([key]) => key !== 'foto')
         .every(([_, value]) => value !== null);
@@ -59,7 +63,7 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
             setProfile({
                 nama: siswa.nama,
                 nis: siswa.nis,
-                gendery: siswa.gendery,
+                gender: siswa.gender,
                 alamat: siswa.alamat,
                 kontak: siswa.kontak,
                 email: siswa.email,
@@ -75,6 +79,8 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
             [name]: value,
         }));
     };
+
+    console.log(isEmpty)
 
     const handleClear = () => {
         setModalProfile(false);
@@ -148,7 +154,7 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
                                         <input type="number" value={profile.nis ?? ""} placeholder={profile.nis ?? 'Belum di isi'}
                                             onChange={handleChange} name="nis"
                                             className="bg-gray-500 rounded-full w-full py-2 px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
-                                            maxLength='5' minLength='5'
+                                            readOnly
                                         />
                                     </div>
                                     <div className="w-full">
@@ -176,7 +182,7 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
                                         <input type="email" value={profile.email ?? ""} placeholder={profile.email ?? 'Belum di isi'}
                                             onChange={handleChange} name="email"
                                             className="bg-gray-500 rounded-full w-full py-2 px-4"
-                                            required
+                                            required readOnly
                                         />
                                     </div>
                                     <div className="w-full">
@@ -184,7 +190,6 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
                                         <input type="number" value={profile.kontak ?? ""} placeholder={profile.kontak ?? 'Belum di isi'}
                                             onChange={handleChange} name="kontak"
                                             className="bg-gray-500 rounded-full w-full py-2 px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                            minLength='10' maxLength='15'
                                             required
                                         />
                                     </div>
@@ -224,7 +229,7 @@ export default function Navbar({siswa, setProfile, profile, handleProfile}) {
                                     </div>
                                 )}
                                 { step == 1 && (
-                                    <div className={`bg-green-500 rounded-full w-full justify-end ${isDifference == '' ? 'hidden' : ''} `}>
+                                    <div className={`bg-green-500 rounded-full w-full justify-end ${isDifference && !isEmpty == '' ? 'hidden' : ''} `}>
                                         <button className="rounded-full w-[100px] h-8" type="submit" disabled={isDifference == ''}>Save</button>
                                     </div>
                                 )}

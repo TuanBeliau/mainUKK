@@ -8,7 +8,7 @@ export default function Notification({ open, message, severity = 'success', onCl
             onClose={onClose}
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-            <Alert onClose={onClose} severity={severity} variant="filled" sx={{ width:'120%', whiteSpace: 'pre-line' }}>
+            <Alert onClose={onClose} severity={severity} variant="filled" sx={{ width:'120%', whiteSpace: 'pre-line', borderRadius: 2 }}>
                 {message}
             </Alert>
         </Snackbar>

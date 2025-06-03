@@ -10,22 +10,35 @@ import Register from '@/pages/auth/register';
 import { initializeTheme } from './hooks/use-appearance';
 
 const isAuthenticated = () => {
-    return !!localStorage.getItem('token');
+    const token = !!sessionStorage.getItem('token');
+    const role = sessionStorage.getItem('role');
+
+    return token && role ? role : null;
 };
 
-function ProtectedRoute({ children }) {
-    return isAuthenticated() ? children : <Navigate to="/" replace />;
+function ProtectedRoute({ children, allowedRoles }) {
+    const role = isAuthenticated();
+
+    if (!role) {
+        return <Navigate to="/" replace/>
+    }
+
+    if (allowedRoles && !allowedRoles.includes(role)) {
+        return <Navigate to="/" replace/>
+    }
+
+    return children
 }
 
 function App() {
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
-        initializeTheme(); // Dark/light mode setup
+        initializeTheme();
         setReady(true);
     }, []);
 
-    if (!ready) return <div>Loading...</div>;
+    if (!ready) return <Login />;
 
     return (
         <BrowserRouter>
@@ -35,7 +48,7 @@ function App() {
                 <Route
                     path="/siswa/dashboard"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['siswa']}>
                             <Dashboard />
                         </ProtectedRoute>
                     }
@@ -56,7 +69,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-                {/* Tambahkan route lainnya sesuai kebutuhan */}
             </Routes>
         </BrowserRouter>
     );

@@ -46,7 +46,7 @@ export default function Industri() {
     }, [actionIndustri]);
 
     const fetchData = () => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
 
         axios.get('/api/siswa', {
             headers: {
@@ -97,7 +97,7 @@ export default function Industri() {
     // Update Profile Siswa
     const handleProfile = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         const formData = new FormData();
         
         formData.append('_method', 'PUT')
@@ -151,7 +151,7 @@ export default function Industri() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
 
         try {
             await axios.post(`/api/data_pkl`, actionIndustri, {
@@ -190,9 +190,6 @@ export default function Industri() {
     const handleClear = () => {
         setModalAction(false)
     }
-
-    console.log('isEmpty :', isEmpty)
-    console.log('actionIndustri :', actionIndustri)
 
     return (
         <div className="relative bg-[#FEFEFE] w-full min-h-screen md:justify-items-center overflow-hidden">

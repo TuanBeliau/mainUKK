@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { router, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import axios from 'axios';
 import Notification from "@/components/notification";
 
@@ -24,8 +24,16 @@ export default function Login() {
             });
 
             if (response.data.success) {
-                localStorage.setItem('token', response.data.token);
-                window.location.href = '/siswa/dashboard';
+                sessionStorage.setItem('token', response.data.token);
+                const role = response.data.user;
+                if (role.includes('siswa')) {
+                    sessionStorage.setItem('role', role);
+                    window.location.href = '/siswa/dashboard';
+                } else if (role.includes('guru')) {
+                    sessionStorage.setItem('role', role);
+                    window.location.href = '/guru/dashboard';
+                }
+
             }
         } catch (error) {
             const errors = error.response?.data?.errors;

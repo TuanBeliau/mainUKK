@@ -3,7 +3,7 @@ import axios from 'axios';
 export default function Logout() {
     // Logout
     const handleLogout = async (e) => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
 
         try {
             await axios.post('/api/logout', {}, {
@@ -12,7 +12,8 @@ export default function Logout() {
                 }
             });
 
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('role');
 
             window.location.href = '/';
         } catch (error) {

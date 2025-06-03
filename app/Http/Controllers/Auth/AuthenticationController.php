@@ -44,45 +44,86 @@ class AuthenticationController extends Controller
 
         Auth::login($user);
 
+        $userRole = Auth::user()->getRoleNames();
+
+        Log::info($userRole);
+
+        if ($userRole->isEmpty()) {
+            throw new \Exception('Pengguna Belum Mendapatkan Role yang Diperlukan');
+        }
+
         $token = $user->createToken('Touken')->plainTextToken;
 
         return response()->json([
             'success' => true,
-            'token' => $token
+            'token' => $token,
+            'user' => $userRole,
+        ]);
+    }
+
+    public function getRegister() {
+        $siswa = Models\Siswa::where('nama', null)->get();
+
+        return response()->json([
+            'siswa' => $siswa,
+            'success' => true
         ]);
     }
 
     public function register(Request $request) {
+        $siswa = Models\Siswa::where('email', $request->email)
+                 ->where('nis', $request->nis)
+                 ->where('nama', null)
+                 ->first();
+        
+        if (!$siswa) {
+            throw new \Exception('Email Siswa Tidak Dapat di Temukan');
+        }
+
         $validated = $request->validate([
             'nama' => 'required|string',
-            'nis' => 'required|string|digits:5|unique:siswas,nis',
-            'email' => 'required|email|unique:siswas,email',
             'password' => 'required|string|min:6'
         ], [
-            'nis.unique' => 'NIS Sudah tersedia',
-            'nis.digits' => 'NIS Harus 5 Digit',
-            'email.unique' => 'Email Sudah tersedia',
+            'password.min' => 'Password Minimal 6 Karakter'
         ]);
 
-        $siswa = Models\Siswa::create([
-            'nama' => $validated['nama'],
-            'email' => $validated['email'],
-            'nis' => $validated['nis'],
-        ]);
+        DB::beginTransaction();
+        try {
+            $siswaUpdate = $siswa->update([
+                'nama' => $validated['nama'],
+            ]);
 
-        $user = Models\User::create([
-            'siswa_id' => $siswa->id,
-            'password' => Hash::make($validated['password'],)
-        ]);
+            $userCreate = Models\User::create([
+                'siswa_id' => $siswa->id,
+                'password' => Hash::make($validated['password']),
+                'email_verified_at' => now()
+            ]);
 
-        Auth::login($user);
+            $userCreate->assignRole('siswa');
 
-        $token = $user->createToken('Touken')->plainTextToken;
+            Auth::login($userCreate);
 
-        return response()->json([
-            'success' => true,
-            'token' => $token
-        ]);
+            $token = $userCreate->createToken('Touken')->plainTextToken;
+            $role = Auth::user()->getRoleNames();
+
+            Log::info($role);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Berhasil Login Sebagai Siswa',
+                'success' =>true,
+                'token' => $token,
+                'role' => $role,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'message' => 'Terjadi Kesalahan Saat Tambah User',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function logout(Request $request) {

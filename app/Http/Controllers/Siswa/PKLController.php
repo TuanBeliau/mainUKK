@@ -30,8 +30,6 @@ class PKLController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info($request->all());
-
         $validated = $request->validate([
             'nama' => 'string|required|max:255|unique:industris,nama',
             'email' => 'email|required|max:255|unique:industris,email',
@@ -43,19 +41,33 @@ class PKLController extends Controller
             'kontak.digits' => 'Range Nomor Telepon 10 Sampai 15 Digit'
         ]);
 
-        $industri = Industri::create([
-            'nama' => $request->nama,
-            'website' => $request->website,
-            'bidang_usaha' => $request->bidang_usaha,
-            'alamat' => $request->alamat,
-            'email' => $request->email,
-            'kontak' => $request->kontak,
-        ]);
+        BD::transactionBegin();
+        try {
+            $industri = Industri::create([
+                'nama' => $request->nama,
+                'website' => $request->website,
+                'bidang_usaha' => $request->bidang_usaha,
+                'alamat' => $request->alamat,
+                'email' => $request->email,
+                'kontak' => $request->kontak,
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Industri Berhasil di Buat'
-        ]);
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Berhasil Membuat Data Industri',
+                'success' => true,
+
+            ]);
+        
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'message' => 'Terjadi Kesalahan Saat Menambah Data Industri',
+                'success' => true
+            ]);
+        }
+
     }
 
     /**

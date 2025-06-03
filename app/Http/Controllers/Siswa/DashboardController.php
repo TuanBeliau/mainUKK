@@ -27,7 +27,8 @@ class DashboardController extends Controller
             }, 
             'siswa.pkl', 
             'siswa.pkl.industri',
-            'siswa.pkl.guru']); 
+            'siswa.pkl.guru',
+        ]); 
         $industri = Industri::all();
 
         return response()->json([
@@ -113,6 +114,10 @@ class DashboardController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Gagal membuat PKL', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return response()->json([
                 'message' => 'Terjadi Kesalahan Saat Menyimpan Data',
                 'error' => $e->getMessage()
@@ -139,7 +144,7 @@ class DashboardController extends Controller
     public function update(Request $request, string $id)
     {
         $siswa = Siswa::findOrFail($id)->load(['pkl', 'pkl.industri']);
-        $cek_industri = Industri::where('nama', $request->nama)->orWhere('email', $request->email)->firstOrFail();
+        $cek_industri = Industri::where('nama', $request->nama)->orWhere('email', $request->email)->first();
 
         if($cek_industri) {
             $request->validate([
@@ -153,7 +158,7 @@ class DashboardController extends Controller
                 'bidang_usaha' => 'required|string|max:255',
                 'alamat' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:industris,email,'.$siswa->pkl->industri->id,
-                'kontak' => 'required|string|digist_between:10,15',
+                'kontak' => 'required|string|digits_between:10,15',
                 'mulai' => 'required|date',
                 'selesai' => 'required|date|after:mulai',
             ], [
@@ -187,7 +192,7 @@ class DashboardController extends Controller
                     'selesai' => $selesai
                 ]);
             } else {
-                Industri::create([
+                $industri = Industri::create([
                     'nama' => $request->nama,
                     'website' => $request->website,
                     'bidang_usaha' => $request->bidang_usaha,
@@ -197,6 +202,7 @@ class DashboardController extends Controller
                 ]);
 
                 $siswa->pkl->update([
+                    'industri_id' => $industri->id,
                     'mulai' => $mulai,
                     'selesai' => $selesai,
                 ]);
@@ -210,7 +216,7 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'message' => 'Terjadi Kesalahan Saat Menyimpan Data',
+                'message' => 'Terjadi Kesalahan Saat Meng-Update Data',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -240,7 +246,7 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'message' => 'Terjadi Kesalahan Saat Menyimpan Data',
+                'message' => 'Terjadi Kesalahan Saat Menghapus Data',
                 'error' => $e->getMessage()
             ], 500);
         }

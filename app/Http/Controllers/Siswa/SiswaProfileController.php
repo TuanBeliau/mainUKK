@@ -23,12 +23,12 @@ class SiswaProfileController extends Controller
             'gender' => 'required|string|max:1',
             'alamat' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:siswas,email,'.$id,
-            'kontak' => 'required|numeric',
+            'kontak' => 'required|numeric|digits_between:10,15',
             'foto'  => 'file|mimes:jpg,png,jpeg|max:2048'
         ], [
-            // 'nama.unique' => 'Siswa Sudah Terdaftar Tolong Masukkan Nama Yang Sesuai!',
             'email.unique' => 'Email Sudah Terdaftar Tolong Masukkan Email Lain!',
-            'nis.digits' => 'Nomor Induk Siswa Tidak Boleh Lebih dari 5 Digut!'
+            'nis.digits' => 'Nomor Induk Siswa Tidak Boleh Lebih dari 5 Digut!',
+            'nis.digits' => 'Nomor Induk Siswa Tidak Boleh Lebih dari 5 Digut!',
         ]);
 
         DB::transaction(function() use ($request, $siswa) {

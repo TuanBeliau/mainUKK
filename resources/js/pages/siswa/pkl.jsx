@@ -40,7 +40,7 @@ export default function PKL() {
 
     const handleProfile = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         const formData = new FormData();
         
         formData.append('_method', 'PUT')
@@ -109,7 +109,7 @@ export default function PKL() {
 
     // Fetch data
     useEffect(() => {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
 
             const fetchData = () => {
                 axios.get('/api/siswa', {

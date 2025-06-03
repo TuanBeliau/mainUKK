@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained('siswas')->onDelete('restrict')->nullable();
-            $table->foreignId('guru_id')->constrained('gurus')->onDelete('restrict')->nullable();
+            $table->foreignId('siswa_id')->nullable()->constrained('siswas')->onDelete('restrict');
+            $table->foreignId('guru_id')->nullable()->constrained('gurus')->onDelete('restrict');
             $table->string('name')->nullable();
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();

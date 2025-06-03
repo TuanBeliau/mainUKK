@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleAppearance;
-use App\Http\Middleware\EnsureTokenUser;
+use App\Http\Middleware\EnsureEmailVerified;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -31,7 +31,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'checkToken' => EnsureTokenUser::class,
+            'isVerified' => EnsureEmailVerified::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -16,8 +16,11 @@ class SiswaFactory extends Factory
      */
     public function definition(): array
     {
+        $number = str_pad($this->faker->numberBetween(0, 99999), 5, '0', STR_PAD_LEFT);
+
         return [
-            //
+            'nis'=> $number,
+            'email'=> "{$number}@sija.com"
         ];
     }
 }
