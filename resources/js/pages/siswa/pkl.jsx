@@ -145,7 +145,7 @@ export default function PKL() {
         <div className="relative bg-[#FEFEFE] w-screen h-screen overflow-hidden md:justify-items-center">
 
             {/* Navbar */}
-            <Navbar siswa={siswa} setProfile={setProfile} profile={profile} handleProfile={handleProfile}/>
+            <Navbar user={siswa} setProfile={setProfile} profile={profile} handleProfile={handleProfile}/>
 
             <Notification 
                 open={notif.open}
@@ -161,11 +161,11 @@ export default function PKL() {
                         <input className="bg-white w-full h-[35px] px-4 text-black rounded-full focus:outline focus:outline-green-500" type="text" 
                             value={search} onChange={(e) => setSearch(e.target.value)}
                         />
-                        <img src="http://127.0.0.1:8000/img/search.png" alt="search" 
+                        <img src="/img/search.png" alt="search" 
                             className="absolute top-1 right-3 pointer-events-none  w-7 h-7"
                         />
                     </div>
-                    <img src="http://127.0.0.1:8000/img/filter.png" alt="filter" 
+                    <img src="/img/filter.png" alt="filter" 
                         className="w-7 h-7 mt-1" onClick={() => setFilterModal(true)}
                     />
                 </div>
@@ -180,20 +180,20 @@ export default function PKL() {
                                     <h1>{index + 1 + (currentPage - 1) * itemsPerPage}. </h1>
                                     <h1 className="w-full">{pkl.siswa.nama}</h1>
                                     {pkl.siswa.status_lapor_pkl === 'Belum Lapor' ? (
-                                        <img src="http://127.0.0.1:8000/img/rejected.png" alt="" 
+                                        <img src="/img/rejected.png" alt="" 
                                             className="w-6 h-6"
                                         />
                                     ) : pkl.siswa.status_lapor_pkl === 'Request Guru' ? (
-                                        <img src="http://127.0.0.1:8000/img/info.png" alt="" 
+                                        <img src="/img/info.png" alt="" 
                                             className="w-6 h-6"
                                         />
                                     ) : (
-                                        <img src="http://127.0.0.1:8000/img/check.png" alt="" 
+                                        <img src="/img/check.png" alt="" 
                                             className="w-6 h-6"
                                         />
                                     )}
                                     <button type="button" onClick={() => {setModal(true); setSelected(pkl)}} className="w-18 h-8" >
-                                        <img src="http://127.0.0.1:8000/img/show.png" alt="" 
+                                        <img src="/img/show.png" alt="" 
                                             className="w-6 h-6" 
                                         />
                                     </button>
@@ -209,7 +209,7 @@ export default function PKL() {
                 ) : (
                     <div className="relative justify-items-center pl-4">
                         <h1 className="font-bold text-[15px] mr-5 mt-10">Data Masih Kosong</h1>
-                        <img src="http://127.0.0.1:8000/img/confused.png" alt="" 
+                        <img src="/img/confused.png" alt="" 
                             className="h-50 w-50 mr-5 mt-5"
                         />
                     </div>
@@ -221,7 +221,7 @@ export default function PKL() {
                             <div className="flex space-x-30">
                                 <h1 className="font-bold text-[20px]">Data Siswa</h1>
                                 <button className="w-5 h-5 mt-1" onClick={() => {setModal(false);}}>
-                                    <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                    <img src="/img/close.png" alt="" />
                                 </button>
                             </div>
 
@@ -253,7 +253,7 @@ export default function PKL() {
                             <div className="flex space-x-30">
                                 <h1 className="font-bold text-[20px]">Status PKL</h1>
                                 <button className="w-5 h-5 mt-1" onClick={() => {setFilterModal(false);}}>
-                                    <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                    <img src="/img/close.png" alt="" />
                                 </button>
                             </div>
 

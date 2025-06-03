@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CustomCors;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\EnsureEmailVerified;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api(prepend: [
+            \App\Http\Middleware\CustomCors::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,

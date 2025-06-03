@@ -194,7 +194,7 @@ export default function Industri() {
     return (
         <div className="relative bg-[#FEFEFE] w-full min-h-screen md:justify-items-center overflow-hidden">
             {/* Navbar */}
-            <Navbar siswa={siswa} setProfile={setProfile} profile={profile} handleProfile={handleProfile}/>
+            <Navbar user={siswa} setProfile={setProfile} profile={profile} handleProfile={handleProfile}/>
 
             <Notification 
                 open={notif.open}
@@ -213,12 +213,12 @@ export default function Industri() {
                             <input className="bg-white w-full h-[35px] px-4 text-black rounded-full focus:outline focus:outline-green-500" type="text" 
                                 value={search} onChange={(e) => setSearch(e.target.value)}
                             />
-                            <img src="http://127.0.0.1:8000/img/search.png" alt="search" 
+                            <img src="/img/search.png" alt="search" 
                                 className="absolute top-1 right-3 pointer-events-none  w-7 h-7"
                             />
                         </div>
                         <button onClick={() => setModalAction(true)}>
-                            <img src="http://127.0.0.1:8000/img/create.png" alt="" 
+                            <img src="/img/create.png" alt="" 
                                 className={`w-10 h-10  ${siswa.pkl ? 'hidden' : ''}`}
                             />
                         </button>
@@ -231,7 +231,7 @@ export default function Industri() {
                                     <div className="flex space-x-28 md:justify-between">
                                         <h1 className="font-bold">{siswa.pkl? 'Edit Data PKL' : 'Buat Data PKL'}</h1>
                                         <button className="w-5 h-5" onClick={() => setModalAction(false)}>
-                                            <img src="http://127.0.0.1:8000/img/close.png"/>
+                                            <img src="/img/close.png"/>
                                         </button>
                                     </div>
                                     <div className="space-y-3">
@@ -317,7 +317,7 @@ export default function Industri() {
                                             <h1>{index + 1 + (currentPage - 1) * itemsPerPage}</h1>
                                             <h1 className='w-full'>{industri.nama}</h1>
                                             <button type="button" onClick={() => {setModalShow(true); setSelected(industri)}} className="w-18 h-8" >
-                                                <img src="http://127.0.0.1:8000/img/show.png" alt="" 
+                                                <img src="/img/show.png" alt="" 
                                                     className="w-6 h-6" 
                                                 />
                                             </button>
@@ -335,7 +335,7 @@ export default function Industri() {
                     ) : (
                         <div className="relative justify-items-center pl-4">
                             <h1 className="font-bold text-[15px] mr-5 mt-10">Data Masih Kosong</h1>
-                            <img src="http://127.0.0.1:8000/img/confused.png"
+                            <img src="/img/confused.png"
                                 className="h-50 w-50 mr-5 mt-5"
                             />
                         </div>
@@ -347,7 +347,7 @@ export default function Industri() {
                                 <div className="flex space-x-30 md:justify-between">
                                     <h1 className="font-bold text-[20px]">Data Industri</h1>
                                     <button className="w-5 h-5 mt-1" onClick={() => {setModalShow(false);}}>
-                                        <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                        <img src="/img/close.png" alt="" />
                                     </button>
                                 </div>
 

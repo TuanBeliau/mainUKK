@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SiswaResource\Pages;
 use App\Filament\Resources\SiswaResource\RelationManagers;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Siswa;
 use App\Models\User;
 use Filament\Forms;
@@ -123,6 +124,7 @@ class SiswaResource extends Resource
                 Tables\Columns\TextColumn::make('alamat'),
                 Tables\Columns\TextColumn::make('kontak'),
                 Tables\Columns\ImageColumn::make('foto')
+                    ->url(fn ($record) => url(Storage::url($record->foto)))
                     ->circular(),
                 Tables\Columns\IconColumn::make('status_lapor_pkl')
                     ->icon(fn (string $state) => [

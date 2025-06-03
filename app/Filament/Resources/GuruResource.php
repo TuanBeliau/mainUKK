@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\GuruResource\Pages;
 use App\Filament\Resources\GuruResource\RelationManagers;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Guru;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -74,7 +75,7 @@ class GuruResource extends Resource
                         Forms\Components\FileUpload::make('foto')
                             ->label('Foto Guru')
                             ->image()
-                            ->directory('foto-gur')
+                            ->directory('foto-guru')
                             ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png'])
                             ->maxSize(2048)
                             ->required()
@@ -98,6 +99,7 @@ class GuruResource extends Resource
                 Tables\Columns\TextColumn::make('alamat'),
                 Tables\Columns\TextColumn::make('kontak'),
                 Tables\Columns\ImageColumn::make('foto')
+                    ->url(fn ($record) => Storage::url($record->foto))
                     ->circular(),
             ])
             ->filters([

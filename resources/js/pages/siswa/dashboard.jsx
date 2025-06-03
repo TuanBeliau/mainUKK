@@ -392,7 +392,7 @@ export default function DashboardSiswa() {
                 message={notif.message}
                 severity={notif.severity}
                 onClose={() => setNotif({ ...notif, open: false })}
-            />
+            /> 
 
             {/* Content */}
             <div className="bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 w-[300px] h-[450px] md:min-w-[1000px] md:min-h-[500px] rounded-md ml-11 mt-12 mb-7 shadow-[10px_15px_30px_rgba(0,0,0,0.5)]">
@@ -403,13 +403,13 @@ export default function DashboardSiswa() {
                     <div className="relative w-12 h-12 rounded-full mt-5 md:pr-10 justify-end hover:bg-gray-400 justify-items-end md:mr-8">
                         {siswa && siswa.pkl ? (
                             <button disabled={siswa.status_lapor_pkl == 'Sudah Lapor'}>
-                                <img src="http://127.0.0.1:8000/img/edit.png" alt="" 
+                                <img src="/img/edit.png" alt="" 
                                     className="absolute top-1 left-1 w-10 h-10" onClick={() => setModal(true)}
                                 />
                             </button>
                         ) : (
                             <div className='cursor-pointer' onClick={() => {isProfile ? setModal(true) : notifProfile()}} >
-                                <img src="http://127.0.0.1:8000/img/create.png" alt="" 
+                                <img src="/img/create.png" alt="" 
                                     className="absolute top-1 left-1 w-10 h-10"
                                 />
                                 <Notification 
@@ -429,7 +429,7 @@ export default function DashboardSiswa() {
                                         <div className="flex space-x-28 md:space-x-85">
                                             <h1 className="font-bold">{siswa.pkl? 'Edit Data PKL' : 'Buat Data PKL'}</h1>
                                             <button className="w-5 h-5" onClick={() => {setModal(false);handleClear()}}>
-                                                <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                                <img src="/img/close.png" alt="" />
                                             </button>
                                         </div>
                                         { step == 0 && (
@@ -511,7 +511,7 @@ export default function DashboardSiswa() {
                                                         minDate={new Date()}
                                                         required
                                                     />
-                                                    <img src="http://127.0.0.1:8000/img/date.png" alt="" 
+                                                    <img src="/img/date.png" alt="" 
                                                         className="absolute right-4 top-1/2 transform -translate-y-1/12 w-6 h-6 pointer-events-none"
                                                     />
                                                 </div>
@@ -525,7 +525,7 @@ export default function DashboardSiswa() {
                                                         required
                                                         minDate={tanggalMulai ? tanggalMulai : siswa.pkl?.mulai}
                                                     />
-                                                    <img src="http://127.0.0.1:8000/img/date.png" alt="" 
+                                                    <img src="/img/date.png" alt="" 
                                                         className="absolute right-4 top-1/2 transform -translate-y-1/12 w-6 Fh-6 pointer-events-none"
                                                     />
                                                 </div> 
@@ -559,7 +559,7 @@ export default function DashboardSiswa() {
                                 <div className={`bg-[#FEFEFE] rounded-lg w-[300px] md:w-[500px] p-6 space-y-5`}>
                                     <div className=''>
                                         <button className="w-5 h-5" onClick={() => {setAction(false);handleClear()}}>
-                                            <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                            <img src="/img/close.png" alt="" />
                                         </button>
                                         <h1 className='text-center text-bold text-lg'>Pilih Yang Benar</h1>
                                     </div>
@@ -626,7 +626,7 @@ export default function DashboardSiswa() {
                     ) : (
                         <div className="relative justify-items-center pl-4">
                             <h1 className="font-bold text-[15px] mr-5 mt-10">Data Masih Kosong</h1>
-                            <img src="http://127.0.0.1:8000/img/confused.png" alt="" 
+                            <img src="/img/confused.png" alt="" 
                                 className="h-50 w-50 mr-5 mt-5"
                             />
                         </div>

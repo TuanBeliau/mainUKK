@@ -44,7 +44,7 @@ export default function Navbar({user, setProfile, profile, handleProfile}) {
 
     useEffect(() => {
         if (user?.foto && !image) {
-            setPreview(`http://127.0.0.1:8000/storage/${user.foto}`);
+            setPreview(`storage/${user.foto}`);
 
             if (role === 'siswa') {
                 setProfile({
@@ -104,12 +104,12 @@ export default function Navbar({user, setProfile, profile, handleProfile}) {
     const handleClear = () => {
         setModalProfile(false);
         setStep(0);
-        setPreview(`http://127.0.0.1:8000/storage/${user.foto}`)
+        setPreview(`storage/${user.foto}`)
         setImage(null)
     }
 
     const imageClear =  () => {
-        setPreview(`http://127.0.0.1:8000/storage/${user.foto}`)
+        setPreview(`storage/${user.foto}`)
         setImage(null)
         setProfile(prev => ({
             ...prev,
@@ -124,15 +124,15 @@ export default function Navbar({user, setProfile, profile, handleProfile}) {
                     <div className="flex bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 shadow-[5px_10px_20px_rgba(0,0,0,0.5)] rounded-br-[100px] w-2/3 md:w-8/3 h-[90px] ">
                         <Link to="/siswa/dashboard" className={`${url === "/siswa/dashboard" ? "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400" 
                                 : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} w-1/2 h-full md:justify-items-center`}>
-                            <img className="w-15 h-15 mt-4 ml-7" src="http://127.0.0.1:8000/img/home.png" alt="" />
+                            <img className="w-15 h-15 mt-4 ml-7" src="/img/home.png" alt="" />
                         </Link>
                         <Link to="/siswa/industri" className={`${url === "/siswa/industri" ? "bg-gradient-to-br from-blue-600 via-blue-400 to-blue-200" 
                                 : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} pl-5 w-1/2 h-full md:justify-items-center`}>
-                            <img className="w-15 h-15 mt-4 mb-2" src="http://127.0.0.1:8000/img/industri.png" alt="" />
+                            <img className="w-15 h-15 mt-4 mb-2" src="/img/industri.png" alt="" />
                         </Link>
                         <Link to="/siswa/pkl" className={`${url === "/siswa/pkl" ? "bg-gradient-to-br from-blue-600 via-blue-400 to-blue-200 rounded-br-[100px]" 
                                 : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200 rounded-br-[100px]"} pl-5 w-1/2 h-full md:justify-items-center`}>
-                            <img className="w-15 h-15 mt-4 mb-2" src="http://127.0.0.1:8000/img/data.png" alt="" />
+                            <img className="w-15 h-15 mt-4 mb-2" src="/img/data.png" alt="" />
                         </Link>
                     </div>
                 )}
@@ -141,18 +141,18 @@ export default function Navbar({user, setProfile, profile, handleProfile}) {
                     <div className="flex bg-gradient-to-br from-blue-500 via-blue-300 to-blue-100 shadow-[5px_10px_20px_rgba(0,0,0,0.5)] rounded-br-[100px] w-2/3 md:w-8/3 h-[90px] ">
                         <Link to="/guru/dashboard" className={`${url === "/guru/dashboard" ? "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400" 
                                 : "hover:bg-gradient-to-br hover:from-blue-600 hover:via-blue-400 hover:to-blue-200"} w-full h-full md:justify-items-center rounded-br-[100px]`}>
-                            <img className="w-15 h-15 mt-4 ml-7" src="http://127.0.0.1:8000/img/home.png" alt="" />
+                            <img className="w-15 h-15 mt-4 ml-7" src="/img/home.png" alt="" />
                         </Link>
                     </div>
                 )}
                 <div className="relative w-1/3 text-black">
                     <button className="relative mr-5 bg-gradient-to-br from-blue-500 via-blue-300 hover:via-blue-400 hover:to-blue-200 to-blue-100 w-20 h-20 rounded-full mt-2 pl-[10px] hover:bg-gray-400 shadow-[5px_5px_10px_rgba(0,0,0,0.5)]">
                         { user?.foto ? (
-                            <img src={`http://127.0.0.1:8000/storage/${user?.foto}`} onClick={() => setModalProfile(true)} alt="" 
+                            <img src={`/storage/${user?.foto}`} onClick={() => setModalProfile(true)} alt="" 
                                 className="w-15 h-15 rounded-full"
                             />
                         ) : (
-                            <img src="http://127.0.0.1:8000/img/profile.png" onClick={() => setModalProfile(true)} alt="" 
+                            <img src="/img/profile.png" onClick={() => setModalProfile(true)} alt="" 
                                 className="w-15 h-15"
                             />
                         )}
@@ -167,7 +167,7 @@ export default function Navbar({user, setProfile, profile, handleProfile}) {
                             <div className="flex space-x-28 md:space-x-85">
                                 <h1 className="font-bold">Data Siswa</h1>
                                 <button className="w-5 h-5" onClick={() => {setModalProfile(false);handleClear()}}>
-                                    <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                    <img src="/img/close.png" alt="" />
                                 </button>
                             </div>
                             { step == 0 && (
@@ -249,7 +249,7 @@ export default function Navbar({user, setProfile, profile, handleProfile}) {
                                                 {image && (
                                                     <button type="button" onClick={imageClear} className="absolute top-20 md:top-27 transition-all duration-300 transfrom hover:shadow-lg hover:shadow-red-500/50 -translate-y-[1px] 
                                                         bg-gradient-to-t from-red-400 to-transparent w-full h-1/2 rounded-md pl-25 md:pl-0 md:justify-items-center pt-1">
-                                                        <img src="http://127.0.0.1:8000/img/trash.png" className="w-10 h-10 transition-transform duration-300 transform hover:scale-140" alt="trash" />
+                                                        <img src="/img/trash.png" className="w-10 h-10 transition-transform duration-300 transform hover:scale-140" alt="trash" />
                                                     </button>
                                                 )}
                                             </div>
