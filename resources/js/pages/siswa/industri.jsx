@@ -69,7 +69,7 @@ export default function Industri() {
     }
 
     const goToNextPage = () => {
-        setCurrentPage(prev => Math.min(prev + 1, ))
+        setCurrentPage(prev => Math.min(prev + 1, totalPages))
     } 
 
     const filteredData = industri.filter((item) => {

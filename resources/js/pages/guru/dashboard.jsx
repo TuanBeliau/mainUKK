@@ -9,8 +9,14 @@ export default function DashboardGuru() {
     const [guru, setGuru] = useState([]);
     const [laporPKL, setLaporPKL] = useState([]);
     const [search, setSearch] = useState('');
+    const itemsPerPage = 6;
+    const totalPages = Math.ceil(laporPKL.length / itemsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
+    const lastItem = itemsPerPage * currentPage;
+    const firstItem = lastItem - itemsPerPage;
     const [profile, setProfile] = useState([]);
+    const [modalShow, setModalShow] = useState(false);
+    const [selected, setSelected] = useState([]);
 
     const fetchData = async () => {
         const token = sessionStorage.getItem('token');
@@ -38,11 +44,17 @@ export default function DashboardGuru() {
         return matchSearch
     });
 
-    const goToNextPage = () => {
+    const currentItems = filteredData.slice(firstItem, lastItem)
 
+    const goToPrevPage = () => {
+        setCurrentPage((prev) => Math.max(prev - 1, 1))
     }
 
-    console.log(filteredData);
+    const goToNextPage = () => {
+        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+    }
+
+    console.log(currentItems.length);
 
     const handleProfile = async (e) => {
         e.preventDefault();
@@ -141,15 +153,72 @@ export default function DashboardGuru() {
                 <h1 className="ml-5 mt-6 text-[20px] font-bold">Data Siswa Bimbingan PKL</h1>
 
                 <div className="text-black ml-5 pr-3 h-full">
-                    {!guru?.pkl && guru.pkl?.length === 0 ? (
-                        <div className="w-full h-full space-y-3 md:space-y-5">
+                    {currentItems.length > 0 ? (
+                        <div className="text-black w-full h-full pr-4 pt-2 space-y-4 md:space-y-3">
+                            <div className='h-full'>
+                                <div className='h-2/3'>
+                                    {currentItems.map((laporPKL, index) => (
+                                        <div key={index} className="flex w-full bg-white/30 rounded-md items-center justify-between px-4 py-2 m-2 shadow-sm hover:bg-white/40 transition space-x-8">
+                                            <h1>{index + 1 + (currentPage - 1) * itemsPerPage}</h1>
+                                            <h1 className='w-full'>{laporPKL.industri.nama}</h1>
+                                            <button type="button" onClick={() => {setModalShow(true); setSelected(laporPKL)}} className="w-18 h-8" >
+                                                <img src="http://127.0.0.1:8000/img/show.png" alt="" 
+                                                    className="w-6 h-6" 
+                                                />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Pagination */}
+                                <div className={`flex ml-2 ${currentPage === 1 ? 'justify-end p' : 'justify-between'}`}>
+                                    <button onClick={goToPrevPage} className={`border border-white text-white bg-transparent hover:bg-white hover:text-blue-500 rounded-md px-2 ${currentPage === 1 ? 'hidden' : '' }`}>Prev</button>
+                                    <button onClick={goToNextPage} className={`border border-white text-white bg-blue-300 hover:bg-white hover:text-blue-500 rounded-md px-2 ${laporPKL.length <= 6  ? 'hidden' : ''}`}>Next</button>
+                                </div>
+                            </div>
                         </div>
                     ) : (
-                        <div className="relative justify-items-center pl-4 pt-6">
+                        <div className="relative justify-items-center pl-4 pt-3">
                             <h1 className="font-bold text-[15px] mr-5 mt-10">Data Masih Kosong</h1>
                             <img src="http://127.0.0.1:8000/img/confused.png" alt="" 
                                 className="h-50 w-50 mr-5 mt-5"
                             />
+                        </div>
+                    )}
+
+                    {modalShow && (
+                        <div className="fixed flex inset-0 bg-black/50 justify-center items-center z-10">
+                            <div className={`bg-[#FEFEFE] rounded-lg w-[300px] md:w-[450px] h-[400px] p-6 space-y-4`}>
+                                <div className="flex space-x-30 md:justify-between">
+                                    <h1 className="font-bold text-[20px]">Data Siswa Terbimbing</h1>
+                                    <button className="w-5 h-5 mt-1" onClick={() => {setModalShow(false);}}>
+                                        <img src="http://127.0.0.1:8000/img/close.png" alt="" />
+                                    </button>
+                                </div>
+
+                                <div className="p-1 space-y-3 text-">
+                                    <div>
+                                        <h1 className="font-bold">Nama Siswa : </h1>
+                                        <h2>{selected.siswa.nama}</h2>
+                                    </div>
+                                    <div>
+                                        <h1 className="font-bold">Nama Industri : </h1>
+                                        <h2>{selected.industri.nama}</h2>
+                                    </div>
+                                    <div>
+                                        <h1 className="font-bold">Email Perusahaan : </h1>
+                                        <h2>{selected.industri.email}</h2>
+                                    </div>
+                                    <div>
+                                        <h1 className="font-bold">Alamat Perusahaan : </h1>
+                                        <h2>{selected.industri.alamat}</h2>
+                                    </div>
+                                    <div>
+                                        <h1 className="font-bold">Website Perusahaan : </h1>
+                                        <h2>{selected.siswa.status_lapor_pkl}</h2>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
