@@ -82,13 +82,4 @@ return [
     'register_role_policy' => [
         'enabled' => true,
     ],
-
-    'register_permissions_for_only' => [
-        App\Filament\Resources\SiswaResource::class,
-        App\Filament\Resources\GuruResource::class,
-        App\Filament\Resources\IndustriResource::class,
-        App\Filament\Resources\PKLResource::class,
-        App\Filament\Resources\UserResource::class,
-    ]
-
 ];
