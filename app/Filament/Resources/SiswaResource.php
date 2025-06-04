@@ -159,13 +159,13 @@ class SiswaResource extends Resource
                             $record->delete();
 
                             Notification::make()
-                                ->title('Penghapusanf Siswa Berhasil')
+                                ->title('Penghapusan Siswa Berhasil')
                                 ->success()
                                 ->send();
                         } catch (QueryException $e) {
                             if ($e->getCode() === '23000') {
                                 Notification::make()
-                                    ->title('Gagal Menghapus Data Siswa Masih Digunakan di Laporan PKL')
+                                    ->title('Gagal Menghapus Data Siswa Masih Digunakan di Laporan PKL dan Terdaftar')
                                     ->danger()
                                     ->send();
                             }
