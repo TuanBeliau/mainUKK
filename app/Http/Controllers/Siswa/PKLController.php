@@ -30,7 +30,7 @@ class PKLController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validated = $request->validate([ 
             'nama' => 'string|required|max:255|unique:industris,nama',
             'email' => 'email|required|max:255|unique:industris,email',
             'website' => 'string|required|max:255|unique:industris,website',

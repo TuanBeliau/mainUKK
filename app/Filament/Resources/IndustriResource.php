@@ -42,7 +42,7 @@ class IndustriResource extends Resource
                             })
                             ->validationMessages([
                                 'unique' => 'Industri Sudah Ada'
-                            ])
+                            ]) 
                             ->required(),
 
                         Forms\Components\TextInput::make('bidang_usaha')

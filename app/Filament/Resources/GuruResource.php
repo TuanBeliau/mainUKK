@@ -130,4 +130,4 @@ class GuruResource extends Resource
             'edit' => Pages\EditGuru::route('/{record}/edit'),
         ];
     }
-}
+} 
