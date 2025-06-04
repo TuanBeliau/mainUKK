@@ -107,12 +107,6 @@ class SiswaResource extends Resource
                                 'Request Guru' => 'Request Guru',
                                 'Sudah Lapor' => 'Sudah Lapor'
                             ]),
-                        
-                        Forms\Components\Select::make('Role')
-                            ->label('Pilih Role')
-                            ->relationship('user.roles', 'name', fn ($query) => $query->where('name', 'siswa'))
-                            ->required()
-                            ->visible(fn ($record) => $record?->user !== null)
                     ])
             ]);
     }
