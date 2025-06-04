@@ -107,10 +107,55 @@ class GuruResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(function ($record) {
+                        try {
+                            $record->delete();
+
+                            Notification::make()
+                                ->title('Penghapusanf Guru Berhasil')
+                                ->success()
+                                ->send();
+                        } catch (QueryException $e) {
+                            if ($e->getCode() === '23000') {
+                                Notification::make()
+                                    ->title('Gagal Menghapus Data Guru Masih Digunakan di Laporan PKL')
+                                    ->danger()
+                                    ->send();
+                            }
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    BulkAction::make('delete')
+                        ->label('Hapus Terpilih')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records) {
+                            foreach ($records as $record) {
+                                try {
+                                    $record->delete();
+                                    Notification::make()
+                                        ->title('Penghapusan Guru Berhasil')
+                                        ->success()
+                                        ->send();
+                                } catch (QueryException $e) {
+                                    if ($e->getCode() === '23000') {
+                                        Notification::make()
+                                            ->title("Gagal Menghapus {$record->nama}")
+                                            ->body("Data Guru Masih Digunakan di Laporan PKL.")
+                                            ->danger()
+                                            ->send();
+                                        continue;
+                                    }
+
+                                    throw $e;
+                                }
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

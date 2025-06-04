@@ -65,6 +65,11 @@ class IndustriResource extends Resource
                             ->placeholder('Masukkan Email Industri')
                             ->email()
                             ->required(),
+
+                        Forms\Components\TextInput::make('website')
+                            ->label('Website Industri')
+                            ->placeholder('Masukkan Website Industri')
+                            ->required(),
                     ])
             ]);
     }

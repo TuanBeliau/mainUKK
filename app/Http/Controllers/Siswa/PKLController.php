@@ -41,7 +41,7 @@ class PKLController extends Controller
             'kontak.digits' => 'Range Nomor Telepon 10 Sampai 15 Digit'
         ]);
 
-        BD::transactionBegin();
+        BD::beginTransaction();
         try {
             $industri = Industri::create([
                 'nama' => $request->nama,
