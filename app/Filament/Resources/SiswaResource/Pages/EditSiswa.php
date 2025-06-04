@@ -14,15 +14,11 @@ class EditSiswa extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 
-    protected function canDelete(): bool
-    {
-        return $this->record->status_lapor_pkl !== 'Sudah Lapor';
-    }
-
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->visible(fn () => $this->record->status_lapor_pkl !== 'Sudah Lapor'),
         ];
     }
 }

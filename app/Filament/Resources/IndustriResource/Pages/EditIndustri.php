@@ -15,15 +15,11 @@ class EditIndustri extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 
-    protected function canDelete(): bool
-    {
-        return \App\Models\Pkl::where('guru_id', $this->record->id)->doesntExist();
-    }
-
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->visible(fn () => $this->record->pkl()->count() === 0),
         ];
     }
 }
